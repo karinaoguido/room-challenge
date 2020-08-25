@@ -43,11 +43,7 @@ router.get('/user', async (req, res) => {
             return res.status(400).send({ error: 'Cannot find user' });
         } else {
             // find rooms in which user is participant
-            console.log(user);
             const room = await Room.find({ participants: { $in: [user.username] }});
-            console.log(room);
-            //const room = await Room.find({ participant: user.username });
-            console.log(room);
             if (!room)
                 return res.status(400).send({ error: 'Cannot find room' });
             
@@ -89,8 +85,6 @@ router.put('/', async (req, res) => {
     try {
         const { username, guid } = req.body;
 
-        console.log(username);
-        console.log(guid);
         // search if there is this username
         const user = await User.findOne({ username });
 
@@ -105,7 +99,6 @@ router.put('/', async (req, res) => {
         } else {
             //search if there is a room for this host name
             const currentHost = await User.findById(req.userId);
-            console.log(currentHost);
             const room_update = await Room.findOne({ host_name: currentHost.username });
             if (!room_update) {
                 return res.status(400).send({ error: 'You are not the host of this room' });
@@ -171,7 +164,7 @@ router.post('/leave', async (req, res) => {
             const user = await User.findById(req.userId).populate('user');
             // check if user is not in the room
             const participantIndex = room.participants.findIndex(username => username === user.username);
-            console.log(participantIndex);
+
             if (participantIndex == -1) {
                 return res.status(400).send({ error: 'User is not in this room' });
             } else {
